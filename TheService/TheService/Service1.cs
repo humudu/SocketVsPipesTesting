@@ -19,6 +19,8 @@ namespace TheService
 
         protected override void OnStart(string[] args)
         {
+            SocketController ctrl = new SocketController();
+
         }
 
         protected override void OnStop()
