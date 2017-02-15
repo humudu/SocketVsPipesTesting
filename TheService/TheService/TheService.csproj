@@ -46,7 +46,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PipeController.cs" />
+    <Compile Include="Pipe\PipeClientStream.cs" />
+    <Compile Include="Pipe\PipeController.cs" />
+    <Compile Include="Pipe\ServerSetup.cs" />
+    <Compile Include="Pipe\StringStream.cs" />
     <Compile Include="SocketController.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>

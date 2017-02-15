@@ -6,7 +6,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.ServiceProcess;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using TheService.Pipe;
 
 namespace TheService
 {
@@ -19,8 +21,17 @@ namespace TheService
 
         protected override void OnStart(string[] args)
         {
-            SocketController ctrl = new SocketController();
+            //-  pipe
+      //      SocketController ctrl = new SocketController();
+            ServerSetup SS = new ServerSetup();
+            Thread PipeThread = new Thread(SS.ServerThread);
+            PipeThread.Start();
+           
 
+
+            //  - socket
+
+            
         }
 
         protected override void OnStop()
