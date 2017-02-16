@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Logging\Logger.cs" />
     <Compile Include="Socket\ClientCommunication.cs" />
     <Compile Include="Pipe\PipeClientStream.cs" />
     <Compile Include="Pipe\PipeController.cs" />
