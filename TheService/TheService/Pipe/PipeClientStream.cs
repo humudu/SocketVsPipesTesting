@@ -52,6 +52,7 @@ namespace TheService.Pipe
                     {
                         for(int u = 0; u<50; u++)
                         {
+                            string msgBack = ss.ReadString();
                         string stringToSend = "I WILL DO IT" + u;
                         ss.WriteString(stringToSend);
                         }
@@ -65,6 +66,11 @@ namespace TheService.Pipe
                     return;
                 }
             }
+        }
+
+        public void DOIT()
+        {
+
         }
     }
 }
