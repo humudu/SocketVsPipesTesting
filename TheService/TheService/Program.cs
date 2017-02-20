@@ -20,6 +20,7 @@ namespace TheService
                 new Service1()
             };
             ServiceBase.Run(ServicesToRun);
+            //please work
         }
     }
 }
