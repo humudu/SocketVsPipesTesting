@@ -52,7 +52,7 @@ namespace TheService.Pipe
                     {
                         for(int u = 0; u<50; u++)
                         {
-                            string msgBack = ss.ReadString();
+                            string clientmsg = ss.ReadString();
                         string stringToSend = "I WILL DO IT" + u;
                         ss.WriteString(stringToSend);
                         }
