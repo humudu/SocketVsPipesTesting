@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Pipes;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Text;
 using System.Threading;
@@ -12,39 +13,72 @@ namespace TheService.Pipe
 {
     class ServerSetup
     {
+        ThreadHandler TH;
         public void ServerThread(object data)
         {
-            while (true)
+            TH = ThreadHandler.Instance;
+                Logging.Logger logger = new Logging.Logger("testtext");
+            //    logger.logit("creating pipe..");
+            PipeSecurity ps = new PipeSecurity();
+         //   ps.AddAccessRule(new PipeAccessRule(new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null), PipeAccessRights.ReadWrite | PipeAccessRights.CreateNewInstance, AccessControlType.Allow));
+            ps.AddAccessRule(new PipeAccessRule("Users", PipeAccessRights.ReadWrite | PipeAccessRights.CreateNewInstance, AccessControlType.Allow));
+            ps.AddAccessRule(new PipeAccessRule("CREATOR OWNER", PipeAccessRights.FullControl, AccessControlType.Allow));
+            ps.AddAccessRule(new PipeAccessRule("SYSTEM", PipeAccessRights.FullControl, AccessControlType.Allow));
+
+
+            NamedPipeServerStream pipeServer =
+                new NamedPipeServerStream("testpipe", PipeDirection.InOut, 5, PipeTransmissionMode.Byte, PipeOptions.WriteThrough, 4028, 4028, ps);
+
+     //       NamedPipeServerStream pipeServer2 =
+     //          new NamedPipeServerStream("testpipe", PipeDirection.InOut, 5, PipeTransmissionMode.Byte, PipeOptions.WriteThrough, 4028, 4028, ps);
+
+
+            //       logger.logit("pipe crreated..");
+            int threadId = Thread.CurrentThread.ManagedThreadId;
+
+
+
+            // Wait for a client to connect
+           
+                logger.logit(" Thread: " + threadId + " waiting for connection");
+            
+            pipeServer.WaitForConnection();
+            try
             {
-                PipeSecurity ps = new PipeSecurity();
-                ps.AddAccessRule(new PipeAccessRule(new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null), PipeAccessRights.ReadWrite, System.Security.AccessControl.AccessControlType.Allow));
-                NamedPipeServerStream pipeServer =
-                    new NamedPipeServerStream("testpipe", PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.WriteThrough, 4028, 4028, ps);
 
-                int threadId = Thread.CurrentThread.ManagedThreadId;
+                StringStream ss = new StringStream(pipeServer);
+                TH.ClientConnected();
 
-                // Wait for a client to connect
-                pipeServer.WaitForConnection();
-                try
-                {
+                ss.WriteString("I am the one true server!");
 
-                    StringStream ss = new StringStream(pipeServer);
-                    
+                //      logger.logit("sent I am the one true server!");
+                PipeClientStream CS = new PipeClientStream(ss, pipeServer);
+                
+                logger.logit(" Thread: " + threadId + " Client connected, about to RunAsClient");
 
-                    ss.WriteString("I am the one true server!");
-                    PipeClientStream CS = new PipeClientStream(ss, pipeServer);
-                    pipeServer.RunAsClient(CS.Start);  //instead of assigning it with a new thread, this will only take care of the 1 connected client.
-                    
-                }
+                pipeServer.RunAsClient(CS.Start);  //instead of assigning it with a new thread, this will only take care of the 1 connected client.
 
-                catch (IOException e)
-                {
-                   
-                    goto OUTER;
-                }
-                OUTER:
-                pipeServer.Close();
             }
+
+            catch (IOException e)
+            {
+
+                   logger.logit("IOException: " + e);
+
+                goto OUTER;
+            }
+            catch (Exception ex)
+            {
+                logger.logit("Exception: " + ex);
+
+            }
+            OUTER:
+            logger.logit("OUTER: closing pipeserver and TH.RemoveThread");
+
+            pipeServer.Close();
+            TH.RemoveThread();
+
         }
     }
 }
+

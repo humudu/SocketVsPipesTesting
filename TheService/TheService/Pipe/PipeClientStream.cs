@@ -31,8 +31,12 @@ namespace TheService.Pipe
             {
                 try
                 {
-
-                    string receivedString = "";
+                    if (!pipeServer.IsConnected)
+                    {
+                        logger.logit("Connection to " + connecteduser + " was lost, returning to then close pipe");
+                        return;
+                    }
+                        string receivedString = "";
                     try
                     {
                         //waiting for value from connected user..
