@@ -21,18 +21,22 @@ namespace TheService
 
         protected override void OnStart(string[] args)
         {
-            //-  pipe
-      //      SocketController ctrl = new SocketController();
-            ServerSetup SS = new ServerSetup();
-            Thread PipeThread = new Thread(SS.ServerThread);
-            PipeThread.Start();
-           
+            Logging.Logger asd = new Logging.Logger("testtext");
 
+            //-  pipe
+            ThreadHandler TH = ThreadHandler.Instance;
+
+            int numThreads = 3;
+            asd.logit("service started. Maximum number of threads set to: " + numThreads);
+
+            Thread threadhandlerthread = new Thread(new ParameterizedThreadStart(TH.handleThreads));
+            TH.handleThreads(numThreads);
+
+           
 
             //  - socket
 
-            SocketController sk = new SocketController();
-
+            
         }
 
         protected override void OnStop()

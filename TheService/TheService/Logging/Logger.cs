@@ -14,12 +14,17 @@ namespace TheService.Logging
         {
             this.filename = filename;
         }
+        public static string lul = "lul";
+
         public void logit(string message)
         {
-        StreamWriter SW = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + "\\" + DateTime.Now.ToString("yyyy/MM/dd") + filename + ".txt", true);
-        SW.WriteLine(DateTime.Now.ToString() + message);
-                        SW.Flush();
-                        SW.Close();
+            lock(lul)
+            {
+                StreamWriter SW = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + "\\" + DateTime.Now.ToString("yyyy-MM-dd") + filename + ".txt", true);
+                SW.WriteLine(DateTime.Now.ToString() + message);
+                SW.Flush();
+                SW.Close();
+            }
         }
     }
 }
