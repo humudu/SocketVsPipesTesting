@@ -31,7 +31,8 @@ namespace TheService
 
             //  - socket
 
-            
+            SocketController sk = new SocketController();
+
         }
 
         protected override void OnStop()
