@@ -14,8 +14,10 @@ namespace TheService.Pipe
     class ServerSetup
     {
         ThreadHandler TH;
-        public void ServerThread(object data)
+        public void ServerThread(object maxinstances)
         {
+            int MaxServers = (int)maxinstances;
+
             TH = ThreadHandler.Instance;
                 Logging.Logger logger = new Logging.Logger("testtext");
                 logger.logit("creating pipe..");
@@ -30,11 +32,11 @@ namespace TheService.Pipe
             //ps.AddAccessRule(new PipeAccessRule("CREATOR OWNER", PipeAccessRights.FullControl, AccessControlType.Allow));
             //ps.AddAccessRule(new PipeAccessRule("USERS", PipeAccessRights.FullControl, AccessControlType.Allow));
 
-            logger.logit("step4");
+           // logger.logit("step4");
 
 
             NamedPipeServerStream pipeServer =
-                new NamedPipeServerStream("testpipe", PipeDirection.InOut, 5, PipeTransmissionMode.Byte, PipeOptions.WriteThrough, 4028, 4028, ps);
+                new NamedPipeServerStream("testpipe", PipeDirection.InOut, MaxServers, PipeTransmissionMode.Byte, PipeOptions.WriteThrough, 4028, 4028, ps);
 
      //       NamedPipeServerStream pipeServer2 =
      //          new NamedPipeServerStream("testpipe", PipeDirection.InOut, 5, PipeTransmissionMode.Byte, PipeOptions.WriteThrough, 4028, 4028, ps);
@@ -47,7 +49,7 @@ namespace TheService.Pipe
 
             // Wait for a client to connect
            
-                logger.logit(" Thread: " + threadId + " waiting for connection");
+                logger.logit("Thread(" + threadId + "): waiting for connection");
             
             pipeServer.WaitForConnection();
             try
@@ -62,7 +64,7 @@ namespace TheService.Pipe
                 //      logger.logit("sent I am the one true server!");
                 PipeClientStream CS = new PipeClientStream(ss, pipeServer);
                 
-                logger.logit(" Thread: " + threadId + " Client connected, about to RunAsClient");
+                logger.logit("Thread(" + threadId + "): Client connected, about to RunAsClient");
 
                 pipeServer.RunAsClient(CS.Start);  //instead of assigning it with a new thread, this will only take care of the 1 connected client.
 

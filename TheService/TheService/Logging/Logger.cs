@@ -21,7 +21,7 @@ namespace TheService.Logging
             lock(lul)
             {
                 StreamWriter SW = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + "\\" + DateTime.Now.ToString("yyyy-MM-dd") + filename + ".txt", true);
-                SW.WriteLine(DateTime.Now.ToString() + message);
+                SW.WriteLine(DateTime.Now.ToString() + " " + message);
                 SW.Flush();
                 SW.Close();
             }

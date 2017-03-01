@@ -38,17 +38,18 @@ namespace TheService.Pipe
         {
             if (MaxThreads>CurrentThreads)
             {
-                Thread newThread = new Thread(SS.ServerThread);
-                newThread.Start();
+             //   new Thread(new ParameterizedThreadStart(TH.handleThreads));
+                Thread newThread = new Thread(new ParameterizedThreadStart(SS.ServerThread));
+                newThread.Start(MaxThreads);
                 CurrentThreads++;
-                logger.logit(" New thread started, currentThreads: " + CurrentThreads);
+                logger.logit("New thread started, currentThreads: " + CurrentThreads);
             }
         }
 
         internal void ClientConnected()
         {
             CurrentClients++;
-            logger.logit(" New client connected, currentClients: " + CurrentClients);
+            logger.logit("New client connected, currentClients: " + CurrentClients);
 
             if (CurrentClients == CurrentThreads)
             {
@@ -62,7 +63,7 @@ namespace TheService.Pipe
         {
             CurrentThreads--;
             CurrentClients--;
-            logger.logit(" Client disconnected, currentThreads: " + CurrentThreads + " currentClients: " + CurrentClients);
+            logger.logit("Client disconnected, currentThreads: " + CurrentThreads + " currentClients: " + CurrentClients);
 
             if (CurrentClients==CurrentThreads)
             {

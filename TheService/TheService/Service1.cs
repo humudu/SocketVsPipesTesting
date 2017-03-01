@@ -29,7 +29,7 @@ namespace TheService
             int numThreads = 3;
             asd.logit("service started. Maximum number of threads set to: " + numThreads);
 
-            Thread threadhandlerthread = new Thread(new ParameterizedThreadStart(TH.handleThreads));
+          //  Thread threadhandlerthread = new Thread(new ParameterizedThreadStart(TH.handleThreads));
             TH.handleThreads(numThreads);
 
            
