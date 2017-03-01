@@ -13,11 +13,12 @@ namespace TheService
     class ClientCommunication
     {
         private Socket client;		// socket to client
-
+        Logging.Logger logfile;
         // Constructor
         public ClientCommunication(Socket client)
         {
             this.client = client;
+            logfile = new Logging.Logger("insideClient");
         }
 
         // Thread method, which communicates with a client
@@ -31,31 +32,37 @@ namespace TheService
             networkstream = new NetworkStream(this.client);
             streamreader = new StreamReader(networkstream);
             streamwriter = new StreamWriter(networkstream);
-
+            logfile.logit("inside handle client");
             data = "Welcome to the Echo Server. Write a text:";
             streamwriter.WriteLine(data);		// Write greeting to Client
             streamwriter.Flush();
 
-            while (true)		// while communicating with Client
-            {
+            //while (true)		// while communicating with Client
+            //{
                 try
                 {
                     data = streamreader.ReadLine();	// Read data from Client
+                    if (data == "DOIT")
+                    {
+                        for (int i = 0; i < 50; i++)
+                        {
+                            string clientdata = streamreader.ReadLine();
+                            string stringToSend = "I WILL DO IT" + i;
+                            streamwriter.WriteLine(stringToSend);
+                            streamwriter.Flush();
+                        }
+                    }
                 }
                 catch (IOException)		// The Client has closed the connection
                 {
-                    break;
+                    logfile.logit("client closed the connection with the server");
+                    //break;
                 }
 
-                //Console.WriteLine(data);
-                if (data == "DOIT")
-                {
-                    string stringToSend = "I WILL DO IT";
-                    streamwriter.WriteLine(stringToSend);
-                }
-                streamwriter.Flush();
-            }
+                
+            //}
             //Console.WriteLine("Connection to client is closing down...\n");
+                logfile.logit("server closed the connection with the client");
             streamwriter.Close();
             streamreader.Close();
             networkstream.Close();
