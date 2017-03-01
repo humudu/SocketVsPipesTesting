@@ -18,12 +18,19 @@ namespace TheService.Pipe
         {
             TH = ThreadHandler.Instance;
                 Logging.Logger logger = new Logging.Logger("testtext");
-            //    logger.logit("creating pipe..");
+                logger.logit("creating pipe..");
+
+            SecurityIdentifier everyone = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
             PipeSecurity ps = new PipeSecurity();
-         //   ps.AddAccessRule(new PipeAccessRule(new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null), PipeAccessRights.ReadWrite | PipeAccessRights.CreateNewInstance, AccessControlType.Allow));
-            ps.AddAccessRule(new PipeAccessRule("Users", PipeAccessRights.ReadWrite | PipeAccessRights.CreateNewInstance, AccessControlType.Allow));
-            ps.AddAccessRule(new PipeAccessRule("CREATOR OWNER", PipeAccessRights.FullControl, AccessControlType.Allow));
-            ps.AddAccessRule(new PipeAccessRule("SYSTEM", PipeAccessRights.FullControl, AccessControlType.Allow));
+            //   ps.AddAccessRule(new PipeAccessRule(new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null), PipeAccessRights.ReadWrite | PipeAccessRights.CreateNewInstance, AccessControlType.Allow));
+            //    ps.AddAccessRule(new PipeAccessRule("Users", PipeAccessRights.ReadWrite | PipeAccessRights.CreateNewInstance, AccessControlType.Allow));
+
+            ps.AddAccessRule(new PipeAccessRule(everyone, PipeAccessRights.FullControl, AccessControlType.Allow));
+            //ps.AddAccessRule(new PipeAccessRule("SYSTEM", PipeAccessRights.FullControl, AccessControlType.Allow));
+            //ps.AddAccessRule(new PipeAccessRule("CREATOR OWNER", PipeAccessRights.FullControl, AccessControlType.Allow));
+            //ps.AddAccessRule(new PipeAccessRule("USERS", PipeAccessRights.FullControl, AccessControlType.Allow));
+
+            logger.logit("step4");
 
 
             NamedPipeServerStream pipeServer =
@@ -33,7 +40,7 @@ namespace TheService.Pipe
      //          new NamedPipeServerStream("testpipe", PipeDirection.InOut, 5, PipeTransmissionMode.Byte, PipeOptions.WriteThrough, 4028, 4028, ps);
 
 
-            //       logger.logit("pipe crreated..");
+                   logger.logit("pipe crreated..");
             int threadId = Thread.CurrentThread.ManagedThreadId;
 
 
@@ -48,6 +55,7 @@ namespace TheService.Pipe
 
                 StringStream ss = new StringStream(pipeServer);
                 TH.ClientConnected();
+                logger.logit("sending first string to client");
 
                 ss.WriteString("I am the one true server!");
 
